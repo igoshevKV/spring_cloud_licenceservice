@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  licensingservice:
+    image: licenseserv:latest
+    ports:
+      - "8073:8074"
+    environment:
+      SPRING_PROFILES_ACTIVE: "dev"
+      SPRING_CLOUD_CONFIG_URI:
+        http://192.168.0.207:8071
+
+    networks:
+      backend:
+        aliases:
+          - "licenseservice"
+networks:
+  backend:
+    driver: bridge
