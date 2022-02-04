@@ -1,5 +1,29 @@
 version: '3.7'
 services:
+#  postgres:
+#    image: postgres:latest
+#    ports:
+#      - "5431:5431"
+#    environment:
+#      POSTGRES_USER: "postgres"
+#      POSTGRES_PASSWORD: "postgres"
+#      POSTGRES_DB: "ostock_dev"
+#      POSTGRES_PORT: 5431
+#      POSTGRES_HOST_AUTH_METHOD: trust
+#    volumes:
+#      #first need in docker ui sharing resource folder, for access docker compose
+#      - ./src\main\resources\db\migration\V0_01__create_licenses.sql:/docker-entrypoint-initdb.d/V0_01__create_licenses.sql
+#      - ./src\main\resources\db\migration\V0_02__fill_licenses.sql:/docker-entrypoint-initdb.d/V0_02__fill_licenses.sql
+#    networks:
+#      backend:
+#        aliases:
+#          - "postgres"
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+
   licensingservice:
     image: licenseserv:latest
     ports:
@@ -8,11 +32,33 @@ services:
       SPRING_PROFILES_ACTIVE: "dev"
       SPRING_CLOUD_CONFIG_URI:
         http://192.168.0.207:8071
-
+      CONFIGSERVER_PORT:   "8071"
+#      DATABASESERVER_PORT: "5431"
+    depends_on:
+      - postgres
     networks:
       backend:
         aliases:
-          - "licenseservice"
+          - "licenseserv"
 networks:
   backend:
     driver: bridge
+
+
+#licensingservice:
+#  image: ostock/licensing-service:0.0.3-SNAPSHOT
+#  environment:
+#    PROFILE: "dev"
+#    CONFIGSERVER_URI: "http://configserver:8071"
+#    CONFIGSERVER_PORT:   "8071"
+#    DATABASESERVER_PORT: "5432"
+#    ENCRYPT_KEY:       "IMSYMMETRIC"
+#  depends_on:
+#    database:
+#      condition: service_healthy
+#    configserver:
+#      condition: service_started
+#  ports:
+#    - "8080:8080"
+#  networks:
+#    - backend

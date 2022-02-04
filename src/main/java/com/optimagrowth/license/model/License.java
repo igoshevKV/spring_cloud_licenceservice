@@ -20,6 +20,8 @@ public class License extends RepresentationModel<License> {
     private String description;
 
     @Column(name = "organization_id", nullable = false)
+//    @ManyToOne
+//    @JoinColumn(name = "organization_id")
     private String organizationId;
 
     @Column(name = "product_name", nullable = false)
