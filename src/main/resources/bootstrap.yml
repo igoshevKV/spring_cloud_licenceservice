@@ -8,5 +8,5 @@ spring:
       uri: http://192.168.0.207:8071
 #      uri: http://localhost:8071
 #      uri: http://127.0.0.1:8071
-server:
-  port: 8074
+#server:
+#  port: 8074
