@@ -12,7 +12,7 @@ public interface LicenseRepository extends CrudRepository<License, Integer> {
 
     List<License> findByOrganizationId(String organizationId);
 
-    License findByOrganizationIdAndLicenseId(String organizationId, String licenseId);
+    License findByLicenseIdAndOrganizationId(String licenseId, String organizationId);
 
     @Query("select a from License a")
     List<License> getAll();
