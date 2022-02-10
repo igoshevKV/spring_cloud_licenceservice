@@ -3,6 +3,7 @@ package com.optimagrowth.license.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 @Entity
 @Table(name = "licenses")
 public class License extends RepresentationModel<License> {
