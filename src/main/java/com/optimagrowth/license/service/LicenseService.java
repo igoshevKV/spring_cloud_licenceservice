@@ -43,6 +43,9 @@ public class LicenseService {
     @Autowired
     OrganizationFeignClient organizationFeignClient;
 
+    @Autowired
+    OrganizationRestTemplateClient organizationRestTemplateClient;
+
     @CircuitBreaker(name = "licenseService")
     @Transactional
     public License getLicense(String licenseId, String organizationId) {
@@ -93,7 +96,7 @@ public class LicenseService {
                 organization = organizationDiscoveryClient.getOrganization(organizationId);
                 break;
             case "rest":
-
+                organization = organizationRestTemplateClient.getOrganization(organizationId);
                 break;
             case "feign":
                 organization = organizationFeignClient.getOrganizationByFeign(organizationId);
