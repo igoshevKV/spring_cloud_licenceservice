@@ -28,16 +28,6 @@ management:
     flyway:
       enabled: true
 
-#feign:
-#  client:
-#    config:
-#      default:
-#        connectTimeout: 160000000
-#        readTimeout: 160000000
-#      organization-service:
-#        connectTimeout: 160000000
-#        readTimeout: 160000000
-
 resilience4j:
   circuitbreaker:
     instances:

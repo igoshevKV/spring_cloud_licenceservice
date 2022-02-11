@@ -3,19 +3,20 @@ package com.optimagrowth.license.controller;
 import com.optimagrowth.license.model.License;
 import com.optimagrowth.license.model.Organization;
 import com.optimagrowth.license.service.LicenseService;
+import com.optimagrowth.license.utils.UserContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeoutException;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class LicenseCustomController {
+
+    public static final Logger logger = LoggerFactory.getLogger(LicenseCustomController.class);
 
     @Autowired
     LicenseService licenseService;
@@ -26,7 +27,9 @@ public class LicenseCustomController {
     }
 
     @GetMapping(value = "/getAllLicenses")
-    public List<License> getAll() throws TimeoutException{
+    public List<License> getAll() throws TimeoutException {
+        logger.debug("LicenseCustomController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
+
         return licenseService.getAllLicenses();
     }
 
@@ -34,6 +37,8 @@ public class LicenseCustomController {
     public Organization getOrganizationFromOrgserv(
             @RequestParam("organizationId") String organizationId,
             @RequestParam("clientType") String clientType) throws TimeoutException {
+
+        logger.debug("LicenseCustomController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
         return licenseService.getOrganizationFromOrgserv(organizationId, clientType);
     }
 }

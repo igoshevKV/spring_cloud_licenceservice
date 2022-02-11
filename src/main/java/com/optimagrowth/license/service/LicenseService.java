@@ -158,7 +158,9 @@ public class LicenseService {
 
     private void sleep() throws TimeoutException{
         try {
-            Thread.sleep(5000);
+            int duration = 5000;
+            Thread.sleep(duration);
+            System.out.println("DURATION: " + duration);
             throw new java.util.concurrent.TimeoutException();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -168,7 +170,6 @@ public class LicenseService {
     private void randomlyRun() throws TimeoutException{
         Random random = new Random();
         int r = random.nextInt(3)+1;
-        System.out.println("r: "+r);
         if(r == 3) sleep();
     }
 }
