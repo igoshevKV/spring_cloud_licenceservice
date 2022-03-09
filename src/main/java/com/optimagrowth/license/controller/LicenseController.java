@@ -1,8 +1,8 @@
 package com.optimagrowth.license.controller;
 
 import com.optimagrowth.license.model.License;
+import com.optimagrowth.license.model.Organization;
 import com.optimagrowth.license.service.LicenseService;
-import com.optimagrowth.license.utils.UserContext;
 import com.optimagrowth.license.utils.UserContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class LicenseController {
     public ResponseEntity<License> getLicense(@PathVariable("organizationId") String organizationId,
                                               @PathVariable("licenseId") String licenseId) {
 
-        logger.debug("LicenseServiceController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
+        logger.debug("LicenseController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
 
         License license = licenseService.getLicense(licenseId, organizationId);
         license.add(
@@ -53,6 +53,7 @@ public class LicenseController {
     public License getLicenseWithClient(@PathVariable("organizationId") String organizationId,
                                         @PathVariable("licenseId") String licenseId,
                                         @PathVariable("clientType") String clientType){
+        logger.debug("LicenseController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
         return licenseService.getLicense(organizationId, licenseId, clientType);
     }
 
@@ -77,4 +78,8 @@ public class LicenseController {
         return ResponseEntity.ok(licenseService.deleteLicense(licenseId));
     }
 
+    @GetMapping
+    public Organization getOrganization(@PathVariable("organizationId") String organizationId){
+        return licenseService.getOrganization(organizationId);
+    }
 }

@@ -29,7 +29,6 @@ public class LicenseCustomController {
     @GetMapping(value = "/getAllLicenses")
     public List<License> getAll() throws TimeoutException {
         logger.debug("LicenseCustomController Correlation id:{}", UserContextHolder.getContext().getCorrelationId());
-
         return licenseService.getAllLicenses();
     }
 

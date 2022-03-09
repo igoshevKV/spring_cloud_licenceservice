@@ -3,30 +3,25 @@ package com.optimagrowth.license.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
+@RedisHash("organization")
 @Accessors(chain = true)
-@Entity(name = "organizations")
-public class Organization {
+public class Organization extends RepresentationModel<Organization> {
 
     @Id
-    @Column(name = "organization_id")
-    private String organizationId;
+    private String id;
     private String name;
-
-    @Column(name = "contact_name")
     private String contactName;
-
-    @Column(name = "contact_email")
     private String contactEmail;
-
-    @Column(name = "contact_phone")
     private String contactPhone;
 }

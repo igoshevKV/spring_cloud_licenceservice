@@ -17,36 +17,4 @@ public class UserContext {
     private String authToken = new String();
     private String userId = new String();
     private String organizationId = new String();
-
-//    public String getCorrelationId() {
-//        return correlationId;
-//    }
-//
-//    public void setCorrelationId(String correlationId) {
-//        this.correlationId = correlationId;
-//    }
-//
-//    public String getAuthToken(){
-//        return authToken;
-//    }
-//
-//    public void setAuthToken(String authToken){
-//        this.authToken = authToken;
-//    }
-//
-//    public String getUserId(){
-//        return userId;
-//    }
-//
-//    public void setUserId(){
-//        this.userId = userId;
-//    }
-//
-//    public String getOrganizationId(){
-//        return organizationId;
-//    }
-//
-//    public void setOrganizationId(String organizationId) {
-//        this.organizationId = organizationId;
-//    }
 }

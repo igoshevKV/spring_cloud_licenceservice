@@ -8,7 +8,7 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
-import org.aspectj.weaver.ast.Or;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
 
 @Service
 public class LicenseService {
+
+    private final static Logger logger = LoggerFactory.getLogger(LicenseService.class);
 
     @Autowired
     MessageSource messageSource;
@@ -57,7 +58,15 @@ public class LicenseService {
                             null), licenseId, organizationId));
         }
 
-        return license.withComment(config.getProperty());
+        try {
+            Organization organization = retrieveOrganizationInfo(organizationId, "rest");
+            if(organization != null){
+                license.setOrganizationId(organization.getId());
+            }
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return license.withComment("any comment");
     }
 
     @Transactional
@@ -71,15 +80,12 @@ public class LicenseService {
         }
 
 
-        return license.withComment(config.getProperty());
+        return license.withComment("any comment");
     }
+
     /* Throwable t - it's required parameter for FALLBACK method */
-    private Organization buildFallbackOrganization(String organizationId, String clientType, Throwable t){
-        return new Organization()
-                .setOrganizationId("0000-0000")
-                .setName("just created Organization and not commited")
-                .setContactName("no one")
-                .setContactEmail("it's doesn't exist");
+    private Organization buildFallbackOrganization(String organizationId, Throwable t){
+        return organizationRestTemplateClient.setAndGetOrganization(organizationId);
     }
 
     @CircuitBreaker(name = "organizationService", fallbackMethod = "buildFallbackOrganization")
@@ -96,34 +102,43 @@ public class LicenseService {
                 organization = organizationDiscoveryClient.getOrganization(organizationId);
                 break;
             case "rest":
-                organization = organizationRestTemplateClient.getOrganization(organizationId);
+                organization = organizationRestTemplateClient.setAndGetOrganization(organizationId);
                 break;
             case "feign":
                 organization = organizationFeignClient.getOrganizationByFeign(organizationId);
+                break;
+            default:
+                organization = organizationRestTemplateClient.setAndGetOrganization(organizationId);
                 break;
         }
 
         return organization;
     }
 
+    /*redis cached*/
+    public Organization getOrganization(String organizationId){
+        Organization organization = organizationRestTemplateClient.setAndGetOrganization(organizationId);
+        return organization;
+    }
+
     @Transactional
     public License createLicense(License license) {
         license.setLicenseId(UUID.randomUUID().toString());
-        if (organizationService.getById(license.getOrganizationId()) == null) {
-            Organization organization = new Organization();
-            organization.setOrganizationId(license.getOrganizationId());
-            organization.setName(license.getOrganizationId());
-            organizationService.createOrganization(organization);
+        if (organizationRestTemplateClient.getRedisCachedOrganization(license.getOrganizationId()) == null) {
+            logger.debug("create mess for kafka to orgserv for creating a new organization id: {}",
+                    license.getOrganizationId());
+            organizationRestTemplateClient.setAndGetOrganization(license.getOrganizationId());
         }
+
         licenseRepository.save(license);
-        return license.withComment(config.getProperty());
+        return license.withComment("comm1");
     }
 
     @Transactional
     public License updateLicense(License license, String organizationId) {
         license.setOrganizationId(organizationId);
         licenseRepository.save(license);
-        return license.withComment(config.getProperty());
+        return license.withComment("anyC");
     }
 
     @Transactional
